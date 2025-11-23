@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXA ai - Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #020617;
+      color: #e5e7eb;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+
+    .sidebar {
+      padding: 1.5rem 1.1rem;
+      border-right: 1px solid rgba(51, 65, 85, 0.9);
+      background: radial-gradient(circle at top left, #0f172a, #020617);
+      display: flex;
+      flex-direction: column;
+      gap: 1.3rem;
+    }
+
+    .side-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .logo-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .side-brand-text {
+      font-size: 0.9rem;
+    }
+
+    .side-brand-text span {
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-top: 1rem;
+    }
+
+    .nav button {
+      border: none;
+      background: transparent;
+      color: #e5e7eb;
+      padding: 0.55rem 0.6rem;
+      text-align: left;
+      font-size: 0.8rem;
+      border-radius: 0.6rem;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.08s;
+    }
+
+    .nav button:hover {
+      background: rgba(148, 163, 184, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .nav button.active {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(236, 72, 153, 0.12));
+      border: 1px solid rgba(129, 140, 248, 0.7);
+    }
+
+    .user-mini {
+      margin-top: auto;
+      padding: 0.75rem 0.6rem;
+      border-radius: 0.7rem;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(51, 65, 85, 0.9);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.8rem;
+    }
+
+    .user-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #22c55e, #14b8a6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .logout {
+      margin-left: auto;
+      font-size: 0.7rem;
+      color: #f97373;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* Main */
+
+    .main {
+      padding: 1.4rem 1.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .top-text small {
+      font-size: 0.78rem;
+      color: #9ca3af;
+    }
+
+    .top-text h1 {
+      margin-top: 0.25rem;
+      font-size: 1.25rem;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: #a5b4fc;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px #22c55e;
+    }
+
+    /* Generic page container */
+
+    .page {
+      display: none;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .page.active-page {
+      display: grid;
+    }
+
+    .layout-two {
+      grid-template-columns: 1.7fr 1.3fr;
+    }
+
+    /* Chat */
+
+    .chat-card {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 0.95rem;
+      border: 1px solid rgba(51, 65, 85, 0.9);
+      padding: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 430px;
+    }
+
+    .chat-card h2 {
+      font-size: 1rem;
+    }
+
+    .chat-card p {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-top: 0.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .chat-window {
+      flex: 1;
+      margin-top: 0.3rem;
+      border-radius: 0.7rem;
+      border: 1px solid rgba(30, 64, 175, 0.9);
+      background: radial-gradient(circle at top left, #020617, #020617);
+      padding: 0.65rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      overflow-y: auto;
+      max-height: 340px;
+    }
+
+    .msg-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .msg-row.user {
+      justify-content: flex-end;
+    }
+
+    .msg-bubble {
+      max-width: 80%;
+      padding: 0.5rem 0.7rem;
+      border-radius: 0.75rem;
+      font-size: 0.8rem;
+      line-height: 1.3;
+      opacity: 0;
+      transform: translateY(4px);
+      animation: fadeInUp 0.18s ease-out forwards;
+    }
+
+    .msg-row.user .msg-bubble {
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      color: white;
+      border-bottom-right-radius: 0.2rem;
+    }
+
+    .msg-row.bot .msg-bubble {
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(55, 65, 81, 0.95);
+      border-bottom-left-radius: 0.2rem;
+    }
+
+    /* typing indicator */
+
+    .typing-row .msg-bubble {
+      background: transparent;
+      border: none;
+      padding-left: 0;
+      box-shadow: none;
+      animation: none;
+      opacity: 1;
+      transform: none;
+      color: #9ca3af;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .typing-label {
+      letter-spacing: 0.04em;
+    }
+
+    .typing-dots {
+      display: inline-flex;
+      gap: 2px;
+    }
+
+    .typing-dots span {
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: #9ca3af;
+      opacity: 0.3;
+      animation: blink 1s infinite ease-in-out;
+    }
+
+    .typing-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    .chat-input {
+      margin-top: 0.55rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.35rem;
+    }
+
+    .chat-input input {
+      padding: 0.55rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.95);
+      color: #e5e7eb;
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    .chat-input input:focus {
+      border-color: #818cf8;
+      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.6);
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 0.55rem 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      color: #e5e7eb;
+      transition: transform 0.08s, background 0.12s, box-shadow 0.12s;
+      position: relative;
+      overflow: visible;
+    }
+
+    .btn.small {
+      padding: 0.35rem 0.7rem;
+      font-size: 0.75rem;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      border: none;
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    /* mic listening glow + pulse */
+    .btn.listening {
+      box-shadow: 0 0 12px rgba(248, 113, 113, 0.9);
+      border-color: #f97373;
+    }
+
+    .btn.listening::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 160%;
+      height: 160%;
+      transform: translate(-50%, -50%);
+      border-radius: 999px;
+      border: 1px solid rgba(248, 113, 113, 0.8);
+      opacity: 0.35;
+      pointer-events: none;
+      animation: pulseRing 1.1s infinite ease-out;
+    }
+
+    /* Features */
+
+    .features-card {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 0.95rem;
+      border: 1px solid rgba(51, 65, 85, 0.9);
+      padding: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .features-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.7rem;
+    }
+
+    .features-top-text h2 {
+      font-size: 1rem;
+      margin-bottom: 0.15rem;
+    }
+
+    .features-top-text p {
+      font-size: 0.78rem;
+      color: #9ca3af;
+    }
+
+    .features-grid {
+      margin-top: 0.3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      font-size: 0.78rem;
+    }
+
+    .feature-item {
+      border-radius: 0.7rem;
+      padding: 0.45rem 0.55rem;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: rgba(15, 23, 42, 0.95);
+      font-size: 0.85rem;
+    }
+
+    .feature-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.15rem;
+    }
+
+    .feature-badge {
+      font-size: 0.78rem;
+      color: #a5b4fc;
+      margin-bottom: 0.15rem;
+    }
+
+    .feature-item span.example-label {
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      font-style: italic;
+    }
+
+    /* Tasks page */
+
+    .section-card {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 0.95rem;
+      border: 1px solid rgba(51, 65, 85, 0.9);
+      padding: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      font-size: 0.8rem;
+    }
+
+    .section-card h2 {
+      font-size: 1rem;
+    }
+
+    .task-list {
+      margin-top: 0.3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .task-item {
+      padding: 0.45rem 0.55rem;
+      border-radius: 0.6rem;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: rgba(15, 23, 42, 0.98);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      transition: background 0.15s, transform 0.1s, opacity 0.15s;
+    }
+
+    .task-main {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .task-title {
+      font-size: 0.8rem;
+    }
+
+    .task-meta {
+      font-size: 0.7rem;
+      color: #9ca3af;
+    }
+
+    .task-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .task-item.done {
+      opacity: 0.65;
+      background: rgba(22, 163, 74, 0.1);
+      border-color: rgba(34, 197, 94, 0.7);
+    }
+
+    .task-item.done .task-title {
+      text-decoration: line-through;
+    }
+
+    .task-pill {
+      font-size: 0.7rem;
+      padding: 0.12rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      color: #e5e7eb;
+    }
+
+    .task-pill.pending {
+      border-color: #facc15;
+      color: #facc15;
+    }
+
+    .task-pill.upcoming {
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+
+    .task-pill.done-pill {
+      border-color: #22c55e;
+      color: #22c55e;
+    }
+
+    .task-btn {
+      border: none;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.55rem;
+      cursor: pointer;
+      background: rgba(15, 23, 42, 0.95);
+      color: #e5e7eb;
+      border: 1px solid rgba(75, 85, 99, 0.9);
+    }
+
+    .task-btn.done-btn {
+      border-color: #22c55e;
+    }
+
+    .task-btn.delete-btn {
+      border-color: #f97373;
+      color: #fecaca;
+    }
+
+    /* Settings page */
+
+    .settings-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-top: 0.4rem;
+    }
+
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0.55rem;
+      border-radius: 0.7rem;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: rgba(15, 23, 42, 0.98);
+      font-size: 0.78rem;
+    }
+
+    .setting-row span.label {
+      color: #e5e7eb;
+    }
+
+    .badge-small {
+      font-size: 0.7rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(129, 140, 248, 0.7);
+      color: #a5b4fc;
+    }
+
+    /* Toast */
+
+    #toast-container {
+      position: fixed;
+      right: 1.5rem;
+      bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      z-index: 50;
+    }
+
+    .toast {
+      min-width: 210px;
+      max-width: 320px;
+      padding: 0.45rem 0.8rem;
+      border-radius: 0.65rem;
+      background: rgba(15, 23, 42, 0.97);
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      font-size: 0.78rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.9);
+      opacity: 0;
+      transform: translateY(6px);
+      animation: toastIn 0.18s ease-out forwards;
+    }
+
+    .toast.success {
+      border-color: #22c55e;
+    }
+
+    .toast.error {
+      border-color: #f97373;
+    }
+
+    .toast.hide {
+      animation: toastOut 0.2s ease-in forwards;
+    }
+
+    /* Modal */
+
+    .hidden {
+      display: none;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.82);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 40;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(15, 23, 42, 0.98);
+      border-radius: 0.9rem;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.95);
+      padding: 1rem 1.1rem 1rem;
+      animation: fadeInUp 0.18s ease-out forwards;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-header h3 {
+      font-size: 0.98rem;
+    }
+
+    .modal-close {
+      border: none;
+      background: transparent;
+      color: #9ca3af;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.1rem 0.3rem;
+    }
+
+    .modal-body {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .modal-body p {
+      font-size: 0.78rem;
+    }
+
+    .file-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .file-row label {
+      font-size: 0.78rem;
+      color: #e5e7eb;
+    }
+    .hidden {
+  display: none !important;
+}
+
+
+    #timetable-file {
+      padding: 0.4rem;
+      border-radius: 0.6rem;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: rgba(15, 23, 42, 0.98);
+      color: #e5e7eb;
+      font-size: 0.75rem;
+    }
+
+    .file-name {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      min-height: 1rem;
+    }
+
+    .modal-footer {
+      margin-top: 0.7rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+
+    /* Animations */
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes blink {
+      0%, 60%, 100% {
+        opacity: 0.2;
+      }
+      30% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes pulseRing {
+      0% {
+        transform: translate(-50%, -50%) scale(0.9);
+        opacity: 0.4;
+      }
+      70% {
+        transform: translate(-50%, -50%) scale(1.15);
+        opacity: 0;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1.15);
+        opacity: 0;
+      }
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes toastOut {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .page.active-page {
+        display: block;
+      }
+
+      #toast-container {
+        right: 0.75rem;
+        left: 0.75rem;
+        bottom: 0.9rem;
+        align-items: center;
+      }
+
+      .toast {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="side-brand">
+        <div class="logo-circle">N</div>
+        <div class="side-brand-text">
+          NEXA ai<br />
+          <span>Smart Personal Assistant</span>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="nav-link active" data-page="dashboard">Dashboard</button>
+        <button class="nav-link" data-page="chat">Chat</button>
+        <button class="nav-link" data-page="tasks">Tasks & Reminders</button>
+        <button class="nav-link" data-page="settings">Settings</button>
+      </div>
+
+      <div class="user-mini">
+        <div class="user-avatar">C</div>
+        <div>
+          <div style="font-size:0.8rem;">Chetana</div>
+          <div style="font-size:0.7rem;color:#9ca3af;">Logged in</div>
+        </div>
+        <span class="logout" onclick="window.location.href='index.html'">Logout</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="top-text">
+          <small>Welcome back</small>
+          <h1>NEXA ai • Your AI-Powered Smart Personal Assistant</h1>
+        </div>
+        <div class="status">
+          <span class="dot"></span>
+          <span>Connected</span>
+        </div>
+      </header>
+
+      <!-- DASHBOARD PAGE -->
+      <section id="page-dashboard" class="page layout-two active-page">
+        <!-- Chat -->
+        <section class="chat-card">
+          <h2>Chat with NEXA ai</h2>
+          <p>Ask for tasks, reminders, study help, summaries, or suggestions.</p>
+
+          <div id="chat-window" class="chat-window"></div>
+
+          <form id="chat-form" class="chat-input">
+            <button type="button" id="voice-btn" class="btn" title="Voice (demo only)">
+              🎤
+            </button>
+            <input
+              type="text"
+              id="chat-input"
+              placeholder="Type here... e.g. 'Set a reminder at 8 PM to study DBMS'"
+              autocomplete="off"
+            />
+            <button type="submit" class="btn primary">Send</button>
+          </form>
+        </section>
+
+        <!-- Features -->
+        <section class="features-card">
+          <div class="features-top">
+            <div class="features-top-text">
+              <h2>Unique Features of NEXA ai</h2>
+              <p>
+                These are the core capabilities your teammates will implement on backend / AI side.
+                Here they are shown as clear features for review, viva, and PPT.
+              </p>
+            </div>
+            <button type="button" id="open-timetable-modal" class="btn small">
+              Upload timetable
+            </button>
+          </div>
+
+          <div class="features-grid">
+            <div class="feature-item">
+              <div class="feature-title">1. Multimodal AI (Voice + Text + Image)</div>
+              <div class="feature-badge">Talk • Type • Upload</div>
+              <div>
+                Users can chat with NEXA using text or voice and upload images (like a timetable photo) to auto-create reminders and tasks.
+              </div>
+              <span class="example-label">Example: Upload timetable → NEXA creates study reminders automatically.</span>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-title">2. Emotion-Aware Responses</div>
+              <div class="feature-badge">Mood Detection</div>
+              <div>
+                NEXA detects user mood from text / voice and replies in an empathetic way,
+                giving calm suggestions when the user seems stressed.
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-title">3. Smart Task & Habit Automation</div>
+              <div class="feature-badge">Routines → Suggestions</div>
+              <div>
+                Learns user routines and suggests repeating tasks automatically.
+              </div>
+              <span class="example-label">Example: “You usually study at 8 PM. Should I create a study reminder?”</span>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-title">4. Cross-Platform Sync</div>
+              <div class="feature-badge">Web • Desktop • Mobile</div>
+              <div>
+                Same NEXA account works across devices so tasks and reminders stay synced.
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-title">5. Personalized Learning Assistant</div>
+              <div class="feature-badge">Student-Centric</div>
+              <div>
+                Generates summaries, explanations, quizzes, and manages timetables based on
+                the student’s behavior and subjects.
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-title">6. Smart Inbox & Notification Manager</div>
+              <div class="feature-badge">Less Noise, More Signal</div>
+              <div>
+                Reads notifications / messages (when integrated) and extracts only the
+                important points, converting them into reminders or tasks.
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-title">7. Context Memory (User Preferences)</div>
+              <div class="feature-badge">Remembers You</div>
+              <div>
+                Stores user preferences like favorite study time, food choices, and daily
+                habits to give more personalised responses.
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-title">8. Secure Vault</div>
+              <div class="feature-badge">Encrypted Storage</div>
+              <div>
+                A secure space for passwords, IDs, and important notes using encryption
+                (handled by backend).
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-title">9. Offline Mode</div>
+              <div class="feature-badge">Works Without Internet</div>
+              <div>
+                Basic features like reminders, notes, and calculations work locally, even
+                when internet is not available.
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-title">10. AI-Based Recommendation Engine</div>
+              <div class="feature-badge">Smart Suggestions</div>
+              <div>
+                Recommends study plans, movies / music based on mood, health tips, and
+                productivity hacks.
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- CHAT PAGE -->
+      <section id="page-chat" class="page">
+        <section class="chat-card">
+          <h2>Chat • Focus Mode</h2>
+          <p>Use this view when you only want to chat with NEXA without distractions.</p>
+
+          <div id="chat-window-chat" class="chat-window"></div>
+
+          <form id="chat-form-chat" class="chat-input">
+            <button type="button" id="voice-btn-chat" class="btn" title="Voice (demo only)">
+              🎤
+            </button>
+            <input
+              type="text"
+              id="chat-input-chat"
+              placeholder="Ask anything… 'Create a study plan for tomorrow'"
+              autocomplete="off"
+            />
+            <button type="submit" class="btn primary">Send</button>
+          </form>
+        </section>
+      </section>
+
+      <!-- TASKS & REMINDERS PAGE -->
+      <section id="page-tasks" class="page layout-two">
+        <section class="section-card">
+          <h2>Tasks & Reminders</h2>
+          <p>Here NEXA will show tasks created from chat, voice, or smart automation.</p>
+
+          <div id="task-list" class="task-list">
+            <!-- tasks injected by JS -->
+          </div>
+        </section>
+
+        <section class="section-card">
+          <h2>Quick Add Task / Reminder</h2>
+          <p>This UI will later connect to <code>POST /api/reminders</code> in the backend.</p>
+
+          <form id="task-form">
+            <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:0.4rem;">
+              <input
+                type="text"
+                id="task-title"
+                placeholder="Title – e.g. 'Finish DBMS unit 3'"
+              />
+              <input
+                type="datetime-local"
+                id="task-datetime"
+              />
+              <select id="task-status" style="padding:0.5rem 0.6rem; border-radius:0.6rem; border:1px solid rgba(55,65,81,0.9); background:rgba(15,23,42,0.98); color:#e5e7eb; font-size:0.78rem; outline:none;">
+                <option value="pending">Pending</option>
+                <option value="upcoming">Upcoming</option>
+                <option value="done">Done</option>
+              </select>
+              <button type="submit" class="btn primary" style="justify-content:center;">
+                Save Task (Local Demo)
+              </button>
+            </div>
+          </form>
+        </section>
+      </section>
+
+      <!-- SETTINGS PAGE -->
+      <section id="page-settings" class="page">
+        <section class="section-card">
+          <h2>Settings</h2>
+          <p>Manage theme, preferences, and NEXA's behavior here.</p>
+
+          <div class="settings-grid">
+            <div class="setting-row">
+              <span class="label">Theme</span>
+              <span class="badge-small">Dark (default)</span>
+            </div>
+            <div class="setting-row">
+              <span class="label">Preferred study time</span>
+              <span class="badge-small">8:00 PM</span>
+            </div>
+            <div class="setting-row">
+              <span class="label">Emotion-aware replies</span>
+              <span class="badge-small">Enabled</span>
+            </div>
+            <div class="setting-row">
+              <span class="label">Notifications</span>
+              <span class="badge-small">Smart (only important)</span>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container"></div>
+
+  <!-- Timetable Upload Modal -->
+  <div id="timetable-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Upload timetable (image or PDF)</h3>
+        <button type="button" id="close-timetable-modal" class="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>
+          This is a frontend demo. In the final system, the uploaded timetable will be sent
+          to the backend / AI module which will detect subjects and timings and auto-create
+          reminders for you.
+        </p>
+        <div class="file-row">
+          <label for="timetable-file">Choose file</label>
+          <input
+            type="file"
+            id="timetable-file"
+            accept="image/*,.pdf"
+          />
+          <div id="timetable-file-name" class="file-name">No file chosen yet.</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="cancel-timetable" class="btn small">Cancel</button>
+        <button type="button" id="upload-timetable-btn" class="btn primary small">
+          Upload & Generate (Demo)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ---------- NAVIGATION ---------- */
+    const navLinks = document.querySelectorAll(".nav-link");
+    const pages = {
+      dashboard: document.getElementById("page-dashboard"),
+      chat: document.getElementById("page-chat"),
+      tasks: document.getElementById("page-tasks"),
+      settings: document.getElementById("page-settings"),
+    };
+
+    navLinks.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        navLinks.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        const target = btn.dataset.page;
+        Object.keys(pages).forEach((key) => pages[key].classList.remove("active-page"));
+
+        if (target === "dashboard" || target === "tasks") {
+          pages[target].classList.add("active-page", "layout-two");
+        } else {
+          pages[target].classList.add("active-page");
+        }
+      });
+    });
+
+    /* ---------- TOAST HELPERS ---------- */
+
+    const toastContainer = document.getElementById("toast-container");
+
+    function showToast(message, type = "info") {
+      if (!toastContainer) return;
+
+      const toast = document.createElement("div");
+      toast.classList.add("toast");
+      if (type === "success") toast.classList.add("success");
+      if (type === "error") toast.classList.add("error");
+
+      const icon = document.createElement("span");
+      icon.textContent = type === "success" ? "✔" : type === "error" ? "⚠" : "ℹ";
+      icon.style.fontSize = "0.8rem";
+
+      const text = document.createElement("span");
+      text.textContent = message;
+
+      toast.appendChild(icon);
+      toast.appendChild(text);
+      toastContainer.appendChild(toast);
+
+      // hide after 1.6s
+      setTimeout(() => {
+        toast.classList.add("hide");
+      }, 1600);
+
+      // remove after animation
+      setTimeout(() => {
+        toast.remove();
+      }, 2000);
+    }
+
+    /* ---------- CHAT HELPERS ---------- */
+
+    function addMessage(targetWindow, text, sender = "user") {
+      const row = document.createElement("div");
+      row.classList.add("msg-row", sender);
+
+      const bubble = document.createElement("div");
+      bubble.classList.add("msg-bubble");
+      bubble.textContent = text;
+
+      row.appendChild(bubble);
+      targetWindow.appendChild(row);
+      targetWindow.scrollTop = targetWindow.scrollHeight;
+    }
+
+    function showTyping(targetWindow) {
+      const old = targetWindow.querySelector(".typing-row");
+      if (old) old.remove();
+
+      const row = document.createElement("div");
+      row.classList.add("msg-row", "bot", "typing-row");
+
+      const bubble = document.createElement("div");
+      bubble.classList.add("msg-bubble");
+
+      const label = document.createElement("span");
+      label.classList.add("typing-label");
+      label.textContent = "NEXA is typing";
+
+      const dots = document.createElement("span");
+      dots.classList.add("typing-dots");
+      dots.innerHTML = "<span></span><span></span><span></span>";
+
+      bubble.appendChild(label);
+      bubble.appendChild(dots);
+
+      row.appendChild(bubble);
+      targetWindow.appendChild(row);
+      targetWindow.scrollTop = targetWindow.scrollHeight;
+
+      return row;
+    }
+
+    function removeTyping(targetWindow) {
+      const typingRow = targetWindow.querySelector(".typing-row");
+      if (typingRow) typingRow.remove();
+    }
+
+    function mockReply(text, targetWindow) {
+      const lower = text.toLowerCase();
+      let reply = "";
+
+      if (lower.includes("reminder")) {
+        reply = "Sure, I can create a reminder. Tell me the title and time.";
+      } else if (lower.includes("study")) {
+        reply = "Let’s plan a focused study session. How long do you want to study?";
+      } else if (lower.includes("summary") || lower.includes("summarize")) {
+        reply = "Once notes are connected, I’ll generate a short summary for you.";
+      } else {
+        reply = "This is the frontend demo. In the real project, this will call the AI backend API.";
+      }
+
+      showTyping(targetWindow);
+
+      setTimeout(() => {
+        removeTyping(targetWindow);
+        addMessage(targetWindow, reply, "bot");
+      }, 900);
+    }
+
+    /* ---------- DASHBOARD CHAT ---------- */
+
+    const chatWindow = document.getElementById("chat-window");
+    const chatForm = document.getElementById("chat-form");
+    const chatInput = document.getElementById("chat-input");
+    const voiceBtn = document.getElementById("voice-btn");
+    let listening = false;
+
+    chatForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const text = chatInput.value.trim();
+      if (!text) return;
+      addMessage(chatWindow, text, "user");
+      chatInput.value = "";
+      mockReply(text, chatWindow);
+    });
+
+    voiceBtn.addEventListener("click", () => {
+      listening = !listening;
+      voiceBtn.classList.toggle("listening", listening);
+      if (listening) {
+        voiceBtn.textContent = "🎧";
+        addMessage(
+          chatWindow,
+          "🎤 Listening... (demo only, real speech-to-text will be integrated here)",
+          "bot"
+        );
+      } else {
+        voiceBtn.textContent = "🎤";
+      }
+    });
+
+    /* ---------- CHAT PAGE (FOCUS) ---------- */
+
+    const chatWindow2 = document.getElementById("chat-window-chat");
+    const chatForm2 = document.getElementById("chat-form-chat");
+    const chatInput2 = document.getElementById("chat-input-chat");
+    const voiceBtn2 = document.getElementById("voice-btn-chat");
+
+    chatForm2.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const text = chatInput2.value.trim();
+      if (!text) return;
+      addMessage(chatWindow2, text, "user");
+      chatInput2.value = "";
+      mockReply(text, chatWindow2);
+    });
+
+    voiceBtn2.addEventListener("click", () => {
+      listening = !listening;
+      voiceBtn2.classList.toggle("listening", listening);
+      if (listening) {
+        voiceBtn2.textContent = "🎧";
+        addMessage(
+          chatWindow2,
+          "🎤 Listening... (demo only, real speech-to-text will be integrated here)",
+          "bot"
+        );
+      } else {
+        voiceBtn2.textContent = "🎤";
+      }
+    });
+
+    /* ---------- TASKS & REMINDERS (DYNAMIC) ---------- */
+
+    const taskListEl = document.getElementById("task-list");
+    const taskForm = document.getElementById("task-form");
+    const taskTitleInput = document.getElementById("task-title");
+    const taskDatetimeInput = document.getElementById("task-datetime");
+    const taskStatusSelect = document.getElementById("task-status");
+
+    let tasks = [];
+
+    function loadTasks() {
+      try {
+        const saved = localStorage.getItem("nexaTasks");
+        tasks = saved ? JSON.parse(saved) : [];
+      } catch {
+        tasks = [];
+      }
+    }
+
+    function saveTasks() {
+      localStorage.setItem("nexaTasks", JSON.stringify(tasks));
+    }
+
+    function statusToPillClass(status) {
+      if (status === "pending") return "pending";
+      if (status === "upcoming") return "upcoming";
+      if (status === "done") return "done-pill";
+      return "";
+    }
+
+    function statusLabel(status) {
+      if (status === "pending") return "Pending";
+      if (status === "upcoming") return "Upcoming";
+      if (status === "done") return "Done";
+      return status;
+    }
+
+    function formatDateTime(dt) {
+      if (!dt) return "No time set";
+      const [datePart, timePart] = dt.split("T");
+      if (!datePart) return "No time set";
+      const [y, m, d] = datePart.split("-");
+      const time = timePart ? timePart.slice(0, 5) : "";
+      return `${d}-${m}-${y}${time ? " • " + time : ""}`;
+    }
+
+    function renderTasks() {
+      taskListEl.innerHTML = "";
+
+      if (!tasks.length) {
+        const empty = document.createElement("p");
+        empty.style.fontSize = "0.78rem";
+        empty.style.color = "#9ca3af";
+        empty.textContent = "No tasks yet. Add one using the form on the right.";
+        taskListEl.appendChild(empty);
+        return;
+      }
+
+      tasks.forEach((task) => {
+        const item = document.createElement("div");
+        item.classList.add("task-item");
+        if (task.status === "done") item.classList.add("done");
+
+        const main = document.createElement("div");
+        main.classList.add("task-main");
+
+        const title = document.createElement("div");
+        title.classList.add("task-title");
+        title.textContent = task.title;
+
+        const meta = document.createElement("div");
+        meta.classList.add("task-meta");
+        meta.textContent = formatDateTime(task.datetime);
+
+        main.appendChild(title);
+        main.appendChild(meta);
+
+        const actions = document.createElement("div");
+        actions.classList.add("task-actions");
+
+        const pill = document.createElement("span");
+        pill.classList.add("task-pill", statusToPillClass(task.status));
+        pill.textContent = statusLabel(task.status);
+
+        const doneBtn = document.createElement("button");
+        doneBtn.classList.add("task-btn", "done-btn");
+        doneBtn.textContent = task.status === "done" ? "Undo" : "Mark done";
+        doneBtn.addEventListener("click", () => toggleTaskDone(task.id));
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.classList.add("task-btn", "delete-btn");
+        deleteBtn.textContent = "Delete";
+        deleteBtn.addEventListener("click", () => deleteTask(task.id));
+
+        actions.appendChild(pill);
+        actions.appendChild(doneBtn);
+        actions.appendChild(deleteBtn);
+
+        item.appendChild(main);
+        item.appendChild(actions);
+        taskListEl.appendChild(item);
+      });
+    }
+
+    function addTask(title, datetime, status) {
+      const newTask = {
+        id: Date.now(),
+        title,
+        datetime,
+        status,
+      };
+      tasks.push(newTask);
+      saveTasks();
+      renderTasks();
+      showToast("Task added.", "success");
+    }
+
+    function toggleTaskDone(id) {
+      tasks = tasks.map((t) => {
+        if (t.id === id) {
+          const newStatus = t.status === "done" ? "pending" : "done";
+          return { ...t, status: newStatus };
+        }
+        return t;
+      });
+      saveTasks();
+      renderTasks();
+
+      const updated = tasks.find((t) => t.id === id);
+      if (updated && updated.status === "done") {
+        showToast("Task marked as done.", "success");
+      } else {
+        showToast("Task marked as pending.", "info");
+      }
+    }
+
+    function deleteTask(id) {
+      tasks = tasks.filter((t) => t.id !== id);
+      saveTasks();
+      renderTasks();
+      showToast("Task deleted.", "info");
+    }
+
+    taskForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const title = taskTitleInput.value.trim();
+      const dt = taskDatetimeInput.value;
+      const status = taskStatusSelect.value;
+
+      if (!title) {
+        showToast("Title is required for a task.", "error");
+        return;
+      }
+
+      addTask(title, dt, status);
+
+      taskTitleInput.value = "";
+      taskDatetimeInput.value = "";
+      taskStatusSelect.value = "pending";
+    });
+
+    /* ---------- TIMETABLE MODAL ---------- */
+
+    const timetableModal = document.getElementById("timetable-modal");
+    const openModalBtn = document.getElementById("open-timetable-modal");
+    const closeModalBtn = document.getElementById("close-timetable-modal");
+    const cancelTimetableBtn = document.getElementById("cancel-timetable");
+    const uploadTimetableBtn = document.getElementById("upload-timetable-btn");
+    const timetableFileInput = document.getElementById("timetable-file");
+    const timetableFileName = document.getElementById("timetable-file-name");
+
+    function openTimetableModal() {
+      timetableModal.classList.remove("hidden");
+    }
+
+    function closeTimetableModal() {
+      timetableModal.classList.add("hidden");
+      timetableFileInput.value = "";
+      timetableFileName.textContent = "No file chosen yet.";
+    }
+
+    if (openModalBtn) {
+      openModalBtn.addEventListener("click", openTimetableModal);
+    }
+
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener("click", closeTimetableModal);
+    }
+
+    if (cancelTimetableBtn) {
+      cancelTimetableBtn.addEventListener("click", closeTimetableModal);
+    }
+
+    // Close when clicking on backdrop
+    timetableModal.addEventListener("click", (e) => {
+      if (e.target === timetableModal) {
+        closeTimetableModal();
+      }
+    });
+
+    timetableFileInput.addEventListener("change", () => {
+      if (timetableFileInput.files && timetableFileInput.files.length > 0) {
+        timetableFileName.textContent = timetableFileInput.files[0].name;
+      } else {
+        timetableFileName.textContent = "No file chosen yet.";
+      }
+    });
+
+    uploadTimetableBtn.addEventListener("click", () => {
+      if (!timetableFileInput.files || timetableFileInput.files.length === 0) {
+        showToast("Please choose a timetable image or PDF first.", "error");
+        return;
+      }
+
+      // Demo only – here backend would parse timetable and create reminders
+      showToast("Timetable uploaded. Backend will generate reminders (demo).", "success");
+      closeTimetableModal();
+    });
+
+    /* ---------- INITIAL MESSAGES + TASK LOAD ---------- */
+
+    window.addEventListener("load", () => {
+      addMessage(
+        chatWindow,
+        "Hi, I’m NEXA ai. Ask me to set reminders, help with studies, or summarize your day.",
+        "bot"
+      );
+      addMessage(
+        chatWindow2,
+        "This is chat focus mode. Ask anything and I’ll respond here.",
+        "bot"
+      );
+
+      loadTasks();
+      renderTasks();
+    });
+  </script>
+</body>
+</html>
