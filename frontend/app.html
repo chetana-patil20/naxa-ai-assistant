@@ -41,16 +41,12 @@
       gap: 0.7rem;
     }
 
-    .logo-circle {
+    .sidebar-logo {
       width: 38px;
       height: 38px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #6366f1, #ec4899);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      font-weight: 700;
+      border-radius: 0.9rem;
+      object-fit: cover;
+      box-shadow: 0 0 18px rgba(129, 140, 248, 0.7);
     }
 
     .side-brand-text {
@@ -137,6 +133,20 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .top-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 0.9rem;
+      object-fit: cover;
+      box-shadow: 0 0 18px rgba(129, 140, 248, 0.7);
     }
 
     .top-text small {
@@ -347,6 +357,7 @@
     }
 
     /* mic listening glow + pulse */
+
     .btn.listening {
       box-shadow: 0 0 12px rgba(248, 113, 113, 0.9);
       border-color: #f97373;
@@ -618,7 +629,7 @@
     /* Modal */
 
     .hidden {
-      display: none;
+      display: none !important;
     }
 
     .modal-backdrop {
@@ -684,10 +695,6 @@
       font-size: 0.78rem;
       color: #e5e7eb;
     }
-    .hidden {
-  display: none !important;
-}
-
 
     #timetable-file {
       padding: 0.4rem;
@@ -800,7 +807,7 @@
   <div class="app">
     <aside class="sidebar">
       <div class="side-brand">
-        <div class="logo-circle">N</div>
+        <img src="./nexa-logo.png" alt="NEXA AI" class="sidebar-logo" />
         <div class="side-brand-text">
           NEXA ai<br />
           <span>Smart Personal Assistant</span>
@@ -826,9 +833,13 @@
 
     <main class="main">
       <header class="topbar">
-        <div class="top-text">
-          <small>Welcome back</small>
-          <h1>NEXA ai • Your AI-Powered Smart Personal Assistant</h1>
+        <div class="topbar-left">
+          <!-- DASHBOARD LOGO NEXT TO HEADING -->
+          <img src="./nexa-logo.png" alt="NEXA ai logo" class="top-logo" />
+          <div class="top-text">
+            <small>Welcome back</small>
+            <h1>NEXA ai • Your AI-Powered Smart Personal Assistant</h1>
+          </div>
         </div>
         <div class="status">
           <span class="dot"></span>
@@ -1109,7 +1120,7 @@
         btn.classList.add("active");
 
         const target = btn.dataset.page;
-        Object.keys(pages).forEach((key) => pages[key].classList.remove("active-page"));
+        Object.keys(pages).forEach((key) => pages[key].classList.remove("active-page", "layout-two"));
 
         if (target === "dashboard" || target === "tasks") {
           pages[target].classList.add("active-page", "layout-two");
@@ -1142,12 +1153,10 @@
       toast.appendChild(text);
       toastContainer.appendChild(toast);
 
-      // hide after 1.6s
       setTimeout(() => {
         toast.classList.add("hide");
       }, 1600);
 
-      // remove after animation
       setTimeout(() => {
         toast.remove();
       }, 2000);
@@ -1224,7 +1233,6 @@
     }
 
     /* ---------- DASHBOARD CHAT ---------- */
-
     const chatWindow = document.getElementById("chat-window");
     const chatForm = document.getElementById("chat-form");
     const chatInput = document.getElementById("chat-input");
@@ -1479,7 +1487,6 @@
       cancelTimetableBtn.addEventListener("click", closeTimetableModal);
     }
 
-    // Close when clicking on backdrop
     timetableModal.addEventListener("click", (e) => {
       if (e.target === timetableModal) {
         closeTimetableModal();
@@ -1500,7 +1507,6 @@
         return;
       }
 
-      // Demo only – here backend would parse timetable and create reminders
       showToast("Timetable uploaded. Backend will generate reminders (demo).", "success");
       closeTimetableModal();
     });
