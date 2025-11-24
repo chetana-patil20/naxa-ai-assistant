@@ -183,14 +183,48 @@
         margin-top: 1.5rem;
       }
     }
+    /* ---------- LOGO GLOW ANIMATION ---------- */
+.logo-glow {
+  width: 120px;
+  display: block;
+  filter:
+      drop-shadow(0 0 6px #6366f1)
+      drop-shadow(0 0 12px #ec4899);
+  animation: logoGlow 2.2s ease-in-out infinite alternate;
+}
+
+.logo-glow:hover {
+  filter:
+      drop-shadow(0 0 12px #6366f1)
+      drop-shadow(0 0 26px #ec4899);
+}
+
+@keyframes logoGlow {
+  0% {
+      opacity: 0.85;
+      transform: translateY(0);
+      filter:
+          drop-shadow(0 0 4px #6366f1)
+          drop-shadow(0 0 10px #ec4899);
+  }
+  100% {
+      opacity: 1;
+      transform: translateY(-3px);
+      filter:
+          drop-shadow(0 0 12px #6366f1)
+          drop-shadow(0 0 26px #ec4899);
+  }
+}
+
   </style>
 </head>
 <body>
   <div class="hero-wrapper">
     <header class="nav">
       <div class="logo-box">
-        <div class="logo-square">"NEXA AI"</div>
-        <div class="logo-text">NEXA ai</div>
+         <img src="./nexa-logo.png" alt="NEXA AI" class="logo-glow">
+        <!-- <div class="logo-square">"NEXA AI"</div>
+        <div class="logo-text">NEXA ai</div> -->
       </div>
       <div class="badge">AI-Powered Smart Personal Assistant</div>
     </header>
